@@ -64,8 +64,8 @@ services:
   speedtest_fw_mi:
     tty: true
     stdin_open: true
-    envs:
-      SPEEDTEST_SERVER: 7839
+    environment:
+      - SPEEDTEST_SERVER=7839
     expose:
       - 9798
     ports:
