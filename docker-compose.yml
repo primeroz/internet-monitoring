@@ -1,7 +1,6 @@
 version: "3.1"
 
 volumes:
-    prometheus_data: {}
     grafana_data: {}
 
 networks:
@@ -10,13 +9,15 @@ networks:
 
 services:
   prometheus:
-    image: prom/prometheus:v2.25.2
+    image: prom/prometheus:v2.28.1
     restart: always
     volumes:
       - ./prometheus/:/etc/prometheus/
-      - prometheus_data:/prometheus
+      - /mnt/prometheus:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=120d'
+      - '--storage.tsdb.retention.size=15GB'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
@@ -60,9 +61,11 @@ services:
     networks:
       - back-tier
 
-  speedtest:
+  speedtest_fw_mi:
     tty: true
     stdin_open: true
+    env:
+      SPEEDTEST_SERVER: 7839
     expose:
       - 9798
     ports:
